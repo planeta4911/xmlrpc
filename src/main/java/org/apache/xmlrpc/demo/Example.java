@@ -10,7 +10,6 @@ public class Example {
     public String init(){
         if (!Server.first){
             Server.first = true;
-            Server.turn = false;
             return "X";
         } else if (!Server.second){
             Server.second = true;
@@ -36,15 +35,23 @@ public class Example {
         Server.field[0][2] = tmpField3;
         Server.field[1][2] = tmpField6;
         Server.field[2][2] = tmpField9;
+        for(int i = 0; i < 3; i++){
+            for (int j = 0; j < 3; j++){
+                System.out.print("|"+Server.field[j][i]+" ");
+            }
+            System.out.println();
+        }
         return true;
     }
 
     public boolean changeTurn(boolean b){
-        Server.turn=!Server.turn;
-        return true;
+        Server.turn=!(Server.turn);
+        System.out.println(Server.turn);
+        return Server.turn;
     }
 
     public boolean getTurn( boolean b){
+
         return Server.turn;
     }
 

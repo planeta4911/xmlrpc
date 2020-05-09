@@ -22,6 +22,7 @@ import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class TicTacToeApp extends Application{
 
@@ -109,16 +110,16 @@ public class TicTacToeApp extends Application{
         if(sym.equals("X")){
             turn = false;
         } else if(sym.equals("O")){
-
-            while (turn){
-                turn = (boolean) client.execute("Example.getTurn", new Object[]{});
+            turn = false;
+            while (!turn){
+                turn = (boolean) client.execute("Example.getTurn", new Object[]{true});
             }
+            System.out.println(turn);
             for(int i=0; i<3; i++){
                 for(int j=0; j<3; j++){
                     String tmpfield =
                             null;
                     try {
-                        System.out.println(j + " " + i);
                         tmpfield = (String) client.execute("Example.returnField", new Object[]{j, i});
                     } catch (XmlRpcException e) {
                         e.printStackTrace();
@@ -126,6 +127,7 @@ public class TicTacToeApp extends Application{
                     field[j][i].symbol.setText(tmpfield);
                 }
             }
+            checkState();
         }
 
     }
@@ -147,20 +149,30 @@ public class TicTacToeApp extends Application{
             symbol.setText(sym);
         }
 
+        public int click = 0;
+
 
         public Tile(){
             Rectangle border = new Rectangle(200,200);
-            border.setFill(Color.GREENYELLOW);
+            border.setFill(Color.WHITE);
             border.setStroke(Color.BLACK);
 
             setAlignment(Pos.CENTER);
             getChildren().setAll(border, symbol);
 
             symbol.setFont(Font.font(72));
+            if (sym.equals("X")){
+                symbol.setFill(Color.BLUE);
+            } else if (sym.equals("O")){
+                symbol.setFill(Color.RED);
+            }
+
+
 
             setOnMouseClicked(mouseEvent -> {
 
                 if(!playable){
+                    System.out.println("GAME OVER!!!");
                     return;
                 }
 
@@ -168,11 +180,17 @@ public class TicTacToeApp extends Application{
                     if(sym.equals("X")){
                         try {
                             turn = (boolean) client.execute("Example.getTurn", new Object[]{true});
+                            System.out.println(turn);
                         } catch (XmlRpcException e) {
                             e.printStackTrace();
                         }
                         if(!turn){
-                            drawSymbol();
+                            if(click==0){
+                                drawSymbol();
+                                click++;
+                                return;
+                            }
+
                             String[] tmpfield = new String[9];
                             for(int i=0; i<3; i++){
                                 for(int j=0; j<3; j++){
@@ -186,32 +204,35 @@ public class TicTacToeApp extends Application{
                                 e.printStackTrace();
                             }
                             try {
-                                boolean e = (boolean) client.execute("Example.changeTurn",new Object[]{true});
+                                turn = (boolean) client.execute("Example.changeTurn",new Object[]{true});
                             } catch (XmlRpcException e) {
                                 e.printStackTrace();
                             }
                             checkState();
 
-                        } else {
+
                             while (turn){
                                 try {
                                     turn = (boolean) client.execute("Example.getTurn", new Object[]{true});
+                                    System.out.println(turn);
                                 } catch (XmlRpcException e) {
                                     e.printStackTrace();
                                 }
                             }
                             for(int i=0; i<3; i++){
                                 for(int j=0; j<3; j++){
-                                    String tmpfield =
+                                    String tmp =
                                             null;
                                     try {
-                                        tmpfield = (String) client.execute("Example.returnField", new Object[]{j, i});
+                                        tmp = (String) client.execute("Example.returnField", new Object[]{j, i});
                                     } catch (XmlRpcException e) {
                                         e.printStackTrace();
                                     }
-                                    field[j][i].symbol.setText(tmpfield);
+                                    field[j][i].symbol.setText(tmp);
                                 }
                             }
+                            checkState();
+                            click--;
                         }
                     } else if (sym.equals("O")){
                         try {
@@ -220,7 +241,13 @@ public class TicTacToeApp extends Application{
                             e.printStackTrace();
                         }
                         if(turn){
-                            drawSymbol();
+                            if(click==0){
+                                drawSymbol();
+                                click++;
+                                return;
+                            }
+
+
                             String[] tmpfield = new String[9];
                             for(int i=0; i<3; i++){
                                 for(int j=0; j<3; j++){
@@ -234,13 +261,13 @@ public class TicTacToeApp extends Application{
                                 e.printStackTrace();
                             }
                             try {
-                                boolean e = (boolean) client.execute("Example.changeTurn",new Object[]{true});
+                                turn = (boolean) client.execute("Example.changeTurn",new Object[]{true});
                             } catch (XmlRpcException e) {
                                 e.printStackTrace();
                             }
                             checkState();
 
-                        } else {
+
                             while (!turn){
                                 try {
                                     turn = (boolean) client.execute("Example.getTurn", new Object[]{true});
@@ -250,16 +277,18 @@ public class TicTacToeApp extends Application{
                             }
                             for(int i=0; i<3; i++){
                                 for(int j=0; j<3; j++){
-                                    String tmpfield =
+                                    String tmp =
                                             null;
                                     try {
-                                        tmpfield = (String) client.execute("Example.returnField", new Object[]{j, i});
+                                        tmp = (String) client.execute("Example.returnField", new Object[]{j, i});
                                     } catch (XmlRpcException e) {
                                         e.printStackTrace();
                                     }
-                                    field[j][i].symbol.setText(tmpfield);
+                                    field[j][i].symbol.setText(tmp);
                                 }
                             }
+                            checkState();
+
                         }
                     }
                 }
