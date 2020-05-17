@@ -21,6 +21,7 @@ public class Server {
 
     public static void main(String[] args) throws Exception {
 
+
         WebServer webServer = new WebServer(port);
 
         XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();

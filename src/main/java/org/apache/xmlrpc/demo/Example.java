@@ -2,8 +2,6 @@ package org.apache.xmlrpc.demo;
 
 import org.apache.xmlrpc.demo.webserver.Server;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Example {
 
